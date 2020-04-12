@@ -18,7 +18,7 @@ def _bar_elements_available(bar_elements, encoding):
         return False
 
 
-def _get_bar_elements(orientation='hor'):
+def _get_bar_elements():
     if _bar_elements_available(BAR_CHARS_HOR, stdout.encoding):
         return BAR_CHARS_HOR
     return BAR_CHARS_ASCII  # used as a fallback solution
