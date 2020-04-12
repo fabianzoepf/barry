@@ -1,27 +1,27 @@
 # This Python file uses the following encoding: utf-8
 from sys import stdout
-#TODO: import os + use os.get_terminal_size()
 import math
 
 
-def _bar_element_available(bar_element, encoding):
+# global params def
+BAR_CHARS_HOR = [u'', u'▏', u'▎', u'▍', u'▌', u'▋', u'▊', u'▉', u'█']
+BAR_CHARS_ASCII = [''] + list(map(str, range(1, 10))) + ['#']
+LABEL_SEPARATOR_STR = ': | '
+
+
+def _bar_elements_available(bar_elements, encoding):
     try:
-        bar_element.encode(encoding)
+        for elem in bar_elements:
+            elem.encode(encoding)
         return True
     except UnicodeEncodeError:
         return False
 
 
-def _get_bar_element(frac=0):
-    bar_char = u'\u2588'  # U+2588 'full block'
-
-    if not _bar_element_available(bar_char, stdout.encoding):
-        if (0 == frac):
-            bar_char = u'#'
-        else:
-            bar_char = str(int(frac * 10))
-
-    return bar_char
+def _get_bar_elements(orientation='hor'):
+    if _bar_elements_available(BAR_CHARS_HOR, stdout.encoding):
+        return BAR_CHARS_HOR
+    return BAR_CHARS_ASCII  # used as a fallback solution
 
 
 def _calc_scaling(data, width):
@@ -29,8 +29,7 @@ def _calc_scaling(data, width):
     str_len = max(len(x) for x in data)
 
     # remaining chars until width reached:
-    # four chars for whitespaces and separator
-    remaining_width = width - str_len - 4
+    remaining_width = width - len(LABEL_SEPARATOR_STR) - str_len
 
     max_entry = float(max(data.values()))
     scale_fac = max_entry / remaining_width
@@ -40,16 +39,18 @@ def _calc_scaling(data, width):
 
 def barplot(data, width=60):
     """Print bar plot of categorical data to terminal"""
-    bar_char = _get_bar_element()
-
+    bar_elems = _get_bar_elements()
     str_len, scale_fac = _calc_scaling(data, width)
 
     for entry in data:
         frac, whole = math.modf(data[entry] / scale_fac)
-        last_bar_char = _get_bar_element(frac)
+        frac_char_idx = int(frac * 100) / (len(bar_elems) - 2)
 
-        print(u'{}: | {}{}'.format(
-            entry.rjust(str_len), bar_char * int(whole), last_bar_char))
+        print(u'{}{}{}{}'.format(
+            entry.rjust(str_len),
+            LABEL_SEPARATOR_STR,
+            bar_elems[-1] * int(whole),
+            bar_elems[frac_char_idx]))
 
 
 if __name__ == '__main__':
