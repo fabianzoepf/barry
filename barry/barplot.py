@@ -13,7 +13,7 @@ def _bar_elements_available(bar_elements, encoding):
     try:
         for elem in bar_elements:
             elem.encode(encoding)
-        return False
+        return True
     except UnicodeEncodeError:
         return False
 
