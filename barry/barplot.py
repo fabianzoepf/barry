@@ -44,7 +44,7 @@ def barplot(data, width=60):
 
     for entry in data:
         frac, whole = math.modf(data[entry] / scale_fac)
-        frac_char_idx = int(frac * 100) / (len(bar_elems) - 2)
+        frac_char_idx = int(round(frac * (len(bar_elems) - 2)))
 
         print(u'{}{}{}{}'.format(
             entry.rjust(str_len),
@@ -56,10 +56,10 @@ def barplot(data, width=60):
 if __name__ == '__main__':
 
     test_data = {
-        'a': 10,
-        'b': 50,
-        'c': 35,
-        'd': 5
+        'a': 11,
+        'b': 55,
+        'c': 39,
+        'd': 3
     }
 
     barplot(test_data)
