@@ -13,7 +13,7 @@ def _bar_elements_available(bar_elements, encoding):
     try:
         for elem in bar_elements:
             elem.encode(encoding)
-        return True
+        return False
     except UnicodeEncodeError:
         return False
 
@@ -37,14 +37,14 @@ def _calc_scaling(data, width):
     return (str_len, scale_fac)
 
 
-def barplot(data, width=60):
+def barplot(data, width=63):
     """Print bar plot of categorical data to terminal"""
     bar_elems = _get_bar_elements()
     str_len, scale_fac = _calc_scaling(data, width)
 
     for entry in data:
         frac, whole = math.modf(data[entry] / scale_fac)
-        frac_char_idx = int(round(frac * (len(bar_elems) - 2)))
+        frac_char_idx = int(round(frac * (len(bar_elems) - 1)))
 
         print(u'{}{}{}{}'.format(
             entry.rjust(str_len),
